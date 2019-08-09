@@ -2,6 +2,8 @@ package com.coates.paycenter.util;
 
 import com.coates.paycenter.configuration.WeiXinConfig;
 
+import com.coates.paycenter.entity.WXPayInfo;
+import com.coates.paycenter.util.wxpay.WXPayUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
