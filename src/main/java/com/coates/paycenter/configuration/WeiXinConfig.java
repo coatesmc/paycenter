@@ -49,37 +49,46 @@ public class WeiXinConfig implements WXPayConfig {
 	private byte[] certData;
 
 	  public  String certLocalPath = "/WEB-INF/cert/apiclient_cert.p12";
-   
 
+	public String appID;
+
+	public String mchID;
+
+	public String key;
 
 	@Override
 	public String getAppID() {
-
-		return "wx62be7645a173f725";
+		return appID;
 	}
 
-	@Override
-	public String getKey() {
-		// TODO Auto-generated method stub
-		return "687d2b4b8fb47367d02e8068d872a196";
+	public void setAppID(String appID) {
+		this.appID = appID;
 	}
 
 	@Override
 	public String getMchID() {
-		
-		return "1483739632";
+		return mchID;
 	}
-	
+
+	public void setMchID(String mchID) {
+		this.mchID = mchID;
+	}
+
+	@Override
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
 	@Override
 	public InputStream getCertStream() {
 		ByteArrayInputStream certBis = new ByteArrayInputStream(this.certData);
 		return certBis;
 	}
 	
-	public String getSecret(){
-		return "537730dab097190beeae50c920e34915";
-	}
-
 
 	@Override
 	public int getHttpConnectTimeoutMs() {

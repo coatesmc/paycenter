@@ -1,1 +1,12 @@
 
+alipay:
+  merchant_private_key: xxx
+  alipay_public_key: xxx
+  notify_url: \u56DE\u8C03\u5730\u5740\u53EF\u4EE5\u5199\u6B7B
+  return_url: \u540C\u6B65\u5730\u5740
+  gatewayUrl: https://openapi.alipaydev.com/gateway.do
+
+weixin:
+  appID:
+  mchID:
+  key:

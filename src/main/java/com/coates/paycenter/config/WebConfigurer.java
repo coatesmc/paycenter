@@ -1,8 +1,11 @@
 package com.coates.paycenter.config;
 
+import com.coates.paycenter.configuration.AlipayConfig;
+import com.coates.paycenter.configuration.WeiXinConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -64,6 +67,7 @@ public class WebConfigurer extends WebMvcConfigurationSupport {
 
     /**
      * 添加时间转换器
+     *
      * @param registry
      */
     @Override
@@ -71,4 +75,26 @@ public class WebConfigurer extends WebMvcConfigurationSupport {
         registry.addConverter(dateConverterConfig);
     }
 
+
+    /**
+     * 支付宝秘钥
+     *
+     * @return
+     */
+    @Bean
+    @ConfigurationProperties(prefix = "alipay")
+    public AlipayConfig getAlipayConfig() {
+        return new AlipayConfig();
+    }
+
+    /**
+     * 支付宝秘钥
+     *
+     * @return
+     */
+    @Bean
+    @ConfigurationProperties(prefix = "weixin")
+    public WeiXinConfig getWeiXinConfig() {
+        return new WeiXinConfig();
+    }
 }

@@ -1,8 +1,17 @@
 package com.coates.paycenter.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.response.AlipayTradePagePayResponse;
+import com.coates.paycenter.configuration.AlipayConfig;
 import com.coates.paycenter.configuration.WeiXinConfig;
 import com.coates.paycenter.service.PaymentGatewayService;
 import com.coates.paycenter.util.Dates;
+import com.coates.paycenter.util.HttpUtil;
+import com.coates.paycenter.util.MapSort;
 import com.coates.paycenter.util.wxpay.WXPayReport;
 import com.coates.paycenter.util.wxpay.WXPayUtil;
 import com.github.wxpay.sdk.WXPay;
@@ -36,6 +45,15 @@ public class PaymentGatewayServiceImpl implements PaymentGatewayService {
 				//必须传正确的用户端IP,支持ipv4、ipv6格式，获取方式详见获取用户ip指引
 				paramMap.put("spbill_create_ip", param.get("ip"));
 				//H5支付的交易类型为MWEB，扫码支付为JSAPI 这里是根据手机的类别进行判断的，当用户为H5浏览是系统自动调用h5支付
+				/**
+				 * 微信支付还提供以下支付方式
+				 * JSAPI--JSAPI支付
+				 * APP--APP支付
+				 * NATIVE--Native支付
+				 * MWEB--H5支付
+				 * MICROPAY--付款码支付
+				 *
+				 */
 				paramMap.put("trade_type", "MWEB");
 				//该字段用于上报支付的场景信息,针对H5支付有以下三种场景,请根据对应场景上报,H5支付不建议在APP端使用，针对场景1，2请接入APP支付，不然可能会出现兼容性问题
 				//1，IOS移动应用{"h5_info": //h5支付固定传"h5_info" {"type": "",  //场景类型"app_name": "",  //应用名"bundle_id": ""  //bundle_id}
@@ -152,6 +170,54 @@ public class PaymentGatewayServiceImpl implements PaymentGatewayService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String AlipayExtremelyPay(Map<String, String> paramMap) throws AlipayApiException {
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id,
+				AlipayConfig.merchant_private_key);
+		// 实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.open.public.template.message.industry.modify
+		AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+		// SDK已经封装掉了公共参数，这里只需要传入业务参数
+		// 此次只是参数展示，未进行字符串转义，实际情况下请转义
+		JSONObject pay = new JSONObject();
+
+		pay.put("out_trade_no","");
+		pay.put("product_code","");
+		pay.put("total_amount","");
+		pay.put("subject","");
+		pay.put("body","");
+		pay.put("timeout_express","");
+
+		request.setBizContent(pay.toJSONString());
+
+		AlipayTradePagePayResponse response = alipayClient.execute(request);
+		// 调用成功，则处理业务逻辑
+		if (response.isSuccess()) {
+			// .....
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getOpenId(String code) {
+		String openid = "false";
+		WeiXinConfig config = new WeiXinConfig();
+		String url = "https://api.weixin.qq.com/sns/oauth2/access_token";
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("appid", config.getAppID());
+		map.put("secret", config.getSecret());
+		map.put("code", code);
+		map.put("grant_type", "authorization_code");
+		String param = MapSort.getSingleton().createLinkStringByGet(map);
+		String results = HttpUtil.sendGet(url, param);
+		JSONObject json = JSONObject.parseObject(results);
+		if (json.get("errcode").toString() == null || json.get("errcode").toString() == "") {
+			openid = json.get("openid").toString();
+		}
+		System.out.println(openid);
+		return openid;
 	}
 
 
